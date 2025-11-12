@@ -15,7 +15,8 @@ from app.database.models import Review  # noqa
 config = context.config
 
 # Override sqlalchemy.url with settings
-config.set_main_option("sqlalchemy.url", settings.database_url.replace("+asyncpg", ""))
+# Keep psycopg prefix for async operations - Alembic will use async_engine_from_config
+config.set_main_option("sqlalchemy.url", settings.database_url)
 
 # Interpret the config file for Python logging.
 if config.config_file_name is not None:
@@ -28,6 +29,9 @@ target_metadata = Base.metadata
 def run_migrations_offline() -> None:
     """Run migrations in 'offline' mode."""
     url = config.get_main_option("sqlalchemy.url")
+    # For offline mode, remove async driver prefix (psycopg3 supports sync operations)
+    if "+psycopg" in url:
+        url = url.replace("+psycopg", "")
     context.configure(
         url=url,
         target_metadata=target_metadata,
@@ -49,7 +53,8 @@ def do_run_migrations(connection: Connection) -> None:
 async def run_async_migrations() -> None:
     """Run migrations in 'online' mode."""
     configuration = config.get_section(config.config_ini_section)
-    configuration["sqlalchemy.url"] = settings.database_url.replace("+asyncpg", "")
+    # Keep psycopg async driver prefix for async operations
+    configuration["sqlalchemy.url"] = settings.database_url
     connectable = async_engine_from_config(
         configuration,
         prefix="sqlalchemy.",

@@ -100,7 +100,7 @@ class Settings(BaseSettings):
     
     # Database Configuration
     database_url: str = Field(
-        default="postgresql+asyncpg://flexreview:flexreview123@localhost:5432/flexreview_db",
+        default="postgresql+psycopg://flexreview:flexreview123@localhost:5432/flexreview_db",
         description="Database connection URL"
     )
     postgres_host: Optional[str] = Field(
@@ -142,7 +142,7 @@ class Settings(BaseSettings):
         if all([self.postgres_host, self.postgres_user, self.postgres_password, self.postgres_db]):
             port = self.postgres_port or 5432
             self.database_url = (
-                f"postgresql+asyncpg://{self.postgres_user}:{self.postgres_password}"
+                f"postgresql+psycopg://{self.postgres_user}:{self.postgres_password}"
                 f"@{self.postgres_host}:{port}/{self.postgres_db}"
             )
         

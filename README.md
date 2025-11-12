@@ -74,7 +74,7 @@ For production deployment with an existing PostgreSQL database:
    
    Update the following variables in `.env`:
    ```env
-   DATABASE_URL=postgresql+asyncpg://user:password@your-db-host:5432/your-db-name
+   DATABASE_URL=postgresql+psycopg://user:password@your-db-host:5432/your-db-name
    POSTGRES_HOST=your-db-host
    POSTGRES_PORT=5432
    POSTGRES_USER=your-db-user
@@ -318,7 +318,7 @@ API_PORT=8000  # Development (docker-compose.dev.yml)
 # Database Configuration
 # For development: docker-compose.dev.yml automatically sets POSTGRES_HOST=db
 # For production: Set to your external database host
-DATABASE_URL=postgresql+asyncpg://flexreview:flexreview123@localhost:5432/flexreview_db
+DATABASE_URL=postgresql+psycopg://flexreview:flexreview123@localhost:5432/flexreview_db
 POSTGRES_HOST=localhost  # Use 'db' for Docker network (dev), your-host for production
 POSTGRES_PORT=5432
 POSTGRES_USER=flexreview
@@ -344,7 +344,7 @@ RATE_LIMIT_PER_HOUR=1000
 For production with external database, update these variables in `.env`:
 
 ```env
-DATABASE_URL=postgresql+asyncpg://production_user:production_password@your-db-host:5432/production_db
+DATABASE_URL=postgresql+psycopg://production_user:production_password@your-db-host:5432/production_db
 POSTGRES_HOST=your-db-host
 POSTGRES_USER=production_user
 POSTGRES_PASSWORD=production_password
@@ -391,7 +391,7 @@ API_PORT=8005
 
 4. **Configure `.env`** file with database credentials:
    ```env
-   DATABASE_URL=postgresql+asyncpg://flexreview:flexreview123@localhost:5432/flexreview_db
+   DATABASE_URL=postgresql+psycopg://flexreview:flexreview123@localhost:5432/flexreview_db
    POSTGRES_HOST=localhost
    POSTGRES_PORT=5432
    POSTGRES_USER=flexreview
