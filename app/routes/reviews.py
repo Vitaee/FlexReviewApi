@@ -3,8 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List
 from pydantic import BaseModel
 from app.models import NormalizedReview
-from app.services.hostaway import HostawayService
-from app.services.normalizer import ReviewNormalizer
+from app.services.review_repository import ReviewRepository
 from app.services.review_approval import ReviewApprovalService
 from app.database.base import get_db
 from app.core.logging_config import get_logger
@@ -30,14 +29,14 @@ class BulkApprovalRequest(BaseModel):
     "/hostaway",
     response_model=List[NormalizedReview],
     summary="Get Hostaway reviews",
-    description="Fetch and normalize all Hostaway reviews from mock data with approval status"
+    description="Fetch all Hostaway reviews from database with approval status"
 )
 async def get_hostaway_reviews(
     request: Request,
     db: AsyncSession = Depends(get_db)
 ) -> List[NormalizedReview]:
     """
-    Retrieve and normalize Hostaway reviews with approval status from database.
+    Retrieve all Hostaway reviews from database.
     
     Returns:
         List of normalized review objects with approval status
@@ -48,47 +47,21 @@ async def get_hostaway_reviews(
     request_id = getattr(request.state, "request_id", "unknown")
     
     try:
-        logger.info(f"[{request_id}] Fetching Hostaway reviews")
+        logger.info(f"[{request_id}] Fetching Hostaway reviews from database")
         
-        # Initialize services
-        hostaway_service = HostawayService()
-        normalizer = ReviewNormalizer()
-        approval_service = ReviewApprovalService()
+        # Load reviews from database
+        reviews = await ReviewRepository.get_all(db)
+        logger.debug(f"[{request_id}] Loaded {len(reviews)} reviews from database")
         
-        # Load raw reviews
-        raw_reviews = hostaway_service.get_reviews()
-        logger.debug(f"[{request_id}] Loaded {len(raw_reviews)} raw reviews")
-        
-        # Normalize each review
+        # Convert to NormalizedReview format
         normalized_reviews = [
-            normalizer.normalize_hostaway_review(review)
-            for review in raw_reviews
+            ReviewRepository.to_normalized_review(review)
+            for review in reviews
         ]
         
-        # Get approval statuses from database
-        review_ids = [review.id for review in normalized_reviews]
-        approval_statuses = await approval_service.get_bulk_approval_status(db, review_ids)
-        
-        # Update approval status in normalized reviews
-        for review in normalized_reviews:
-            if review.id in approval_statuses:
-                review.isApproved = approval_statuses[review.id]
-        
-        logger.info(f"[{request_id}] Successfully normalized {len(normalized_reviews)} reviews")
+        logger.info(f"[{request_id}] Successfully retrieved {len(normalized_reviews)} reviews")
         return normalized_reviews
         
-    except FileNotFoundError as e:
-        logger.error(f"[{request_id}] Mock data file not found: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=str(e)
-        ) from e
-    except ValueError as e:
-        logger.error(f"[{request_id}] Data validation error: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail=f"Data validation error: {str(e)}"
-        ) from e
     except Exception as e:
         logger.error(f"[{request_id}] Unexpected error: {e}", exc_info=True)
         raise HTTPException(
@@ -133,7 +106,7 @@ async def toggle_review_approval(
         
         return {
             "success": True,
-            "review_id": approval.review_id,
+            "review_id": approval.id,
             "is_approved": approval.is_approved,
             "message": f"Review {approval_request.review_id} {'approved' if approval_request.is_approved else 'rejected'}"
         }
@@ -196,38 +169,38 @@ async def bulk_toggle_review_approval(
 
 @router.get(
     "/approved",
+    response_model=List[NormalizedReview],
     summary="Get approved reviews",
-    description="Get list of approved review IDs (for public display)"
+    description="Get approved reviews for public display (with full review data)"
 )
 async def get_approved_reviews(
     request: Request,
     listing_id: str = None,
     db: AsyncSession = Depends(get_db)
-):
+) -> List[NormalizedReview]:
     """
-    Get list of approved review IDs.
+    Get approved reviews for public display.
     
     Args:
         listing_id: Optional filter by listing ID
         db: Database session
         
     Returns:
-        List of approved review IDs
+        List of approved normalized review objects
     """
     request_id = getattr(request.state, "request_id", "unknown")
     
     try:
-        approved_ids = await ReviewApprovalService.get_approved_reviews(
-            db=db,
-            listing_id=listing_id
-        )
+        approved_reviews = await ReviewRepository.get_approved(db, listing_id)
         
-        logger.info(f"[{request_id}] Retrieved {len(approved_ids)} approved review IDs")
+        normalized_reviews = [
+            ReviewRepository.to_normalized_review(review)
+            for review in approved_reviews
+        ]
         
-        return {
-            "approved_review_ids": approved_ids,
-            "count": len(approved_ids)
-        }
+        logger.info(f"[{request_id}] Retrieved {len(normalized_reviews)} approved reviews")
+        
+        return normalized_reviews
         
     except Exception as e:
         logger.error(f"[{request_id}] Error getting approved reviews: {e}", exc_info=True)

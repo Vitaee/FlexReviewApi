@@ -229,17 +229,36 @@ Returns API health status.
 
 ## Database Schema
 
-### Review Approvals Table
+### Reviews Table
 
-Stores approval status for reviews:
+Stores all review data in the database:
 
-- `id`: Primary key
-- `review_id`: Unique review identifier (indexed)
+- `id`: Primary key (review ID)
 - `listing_id`: Listing identifier (indexed, optional)
-- `is_approved`: Approval status (boolean)
+- `listing_name`: Name of the listing (indexed)
+- `listing_location`: Location of the listing
+- `channel`: Review source channel (airbnb, booking, direct, vrbo, hostaway) (indexed)
+- `type`: Review type (host-to-guest, guest-to-host) (indexed)
+- `status`: Review status (published, draft, etc.) (indexed)
+- `rating`: Overall rating (0-10, nullable)
+- `overall_rating`: Alias for rating (nullable)
+- `category_ratings`: JSON object with category ratings (e.g., {"cleanliness": 10})
+- `public_review`: Public review text
+- `private_note`: Private/internal notes
+- `guest_name`: Guest name (nullable)
+- `submitted_at`: Review submission timestamp (indexed)
+- `stay_date`: Date of stay (YYYY-MM-DD format)
+- `stay_length`: Length of stay in days
+- `is_approved`: Approval status for public display (indexed)
 - `approved_at`: Timestamp when approved
 - `created_at`: Record creation timestamp
 - `updated_at`: Record update timestamp
+
+**Indexes:**
+- `idx_review_listing_approved`: Composite index on `listing_id` and `is_approved`
+- `idx_review_channel_status`: Composite index on `channel` and `status`
+- `idx_review_submitted_at`: Index on `submitted_at`
+- `idx_review_approved`: Index on `is_approved`
 
 ## Database Migrations
 

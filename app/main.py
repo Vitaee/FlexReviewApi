@@ -49,12 +49,17 @@ def create_app() -> FastAPI:
     
     @app.on_event("startup")
     async def startup_event():
-        """Initialize database on startup"""
+        """Initialize database and seed data on startup"""
         try:
             await init_db()
             from app.core.logging_config import get_logger
+            from app.scripts.seed_database import seed_database
             logger = get_logger(__name__)
             logger.info("Database initialized successfully")
+            
+            # Seed database with mock data if empty
+            await seed_database()
+            
         except Exception as e:
             from app.core.logging_config import get_logger
             logger = get_logger(__name__)

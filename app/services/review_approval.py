@@ -1,9 +1,7 @@
+"""Review approval service - handles approval status persistence"""
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, update
-from sqlalchemy.exc import IntegrityError
-from datetime import datetime
-from typing import Optional, Dict, List
-from app.database.models import ReviewApproval
+from typing import Optional, List
+from app.services.review_repository import ReviewRepository
 from app.core.logging_config import get_logger
 
 
@@ -11,7 +9,7 @@ logger = get_logger(__name__)
 
 
 class ReviewApprovalService:
-    """Service for managing review approval status"""
+    """Service for managing review approval status - uses Review table"""
     
     @staticmethod
     async def get_approval_status(
@@ -26,19 +24,16 @@ class ReviewApprovalService:
             review_id: Review ID
             
         Returns:
-            Approval status (True/False) or None if not set
+            Approval status (True/False) or None if not found
         """
-        result = await db.execute(
-            select(ReviewApproval).where(ReviewApproval.review_id == review_id)
-        )
-        approval = result.scalar_one_or_none()
-        return approval.is_approved if approval else None
+        review = await ReviewRepository.get_by_id(db, review_id)
+        return review.is_approved if review else None
     
     @staticmethod
     async def get_bulk_approval_status(
         db: AsyncSession,
         review_ids: List[int]
-    ) -> Dict[int, bool]:
+    ) -> dict[int, bool]:
         """
         Get approval status for multiple reviews.
         
@@ -52,12 +47,8 @@ class ReviewApprovalService:
         if not review_ids:
             return {}
         
-        result = await db.execute(
-            select(ReviewApproval).where(ReviewApproval.review_id.in_(review_ids))
-        )
-        approvals = result.scalars().all()
-        
-        return {approval.review_id: approval.is_approved for approval in approvals}
+        reviews = await ReviewRepository.get_all(db)
+        return {review.id: review.is_approved for review in reviews if review.id in review_ids}
     
     @staticmethod
     async def set_approval_status(
@@ -65,7 +56,7 @@ class ReviewApprovalService:
         review_id: int,
         is_approved: bool,
         listing_id: Optional[str] = None
-    ) -> ReviewApproval:
+    ):
         """
         Set approval status for a review.
         
@@ -73,37 +64,19 @@ class ReviewApprovalService:
             db: Database session
             review_id: Review ID
             is_approved: Approval status
-            listing_id: Optional listing ID for indexing
+            listing_id: Optional listing ID (for logging)
             
         Returns:
-            ReviewApproval object
+            Updated Review object
         """
-        # Try to update existing record
-        result = await db.execute(
-            select(ReviewApproval).where(ReviewApproval.review_id == review_id)
-        )
-        approval = result.scalar_one_or_none()
+        review = await ReviewRepository.set_approval_status(db, review_id, is_approved)
         
-        if approval:
-            approval.is_approved = is_approved
-            approval.approved_at = datetime.utcnow() if is_approved else None
-            if listing_id:
-                approval.listing_id = listing_id
+        if review:
+            logger.info(f"Set approval status for review {review_id}: {is_approved}")
         else:
-            # Create new record
-            approval = ReviewApproval(
-                review_id=review_id,
-                listing_id=listing_id,
-                is_approved=is_approved,
-                approved_at=datetime.utcnow() if is_approved else None
-            )
-            db.add(approval)
+            logger.warning(f"Review {review_id} not found")
         
-        await db.commit()
-        await db.refresh(approval)
-        
-        logger.info(f"Set approval status for review {review_id}: {is_approved}")
-        return approval
+        return review
     
     @staticmethod
     async def bulk_set_approval_status(
@@ -119,49 +92,14 @@ class ReviewApprovalService:
             db: Database session
             review_ids: List of review IDs
             is_approved: Approval status
-            listing_id: Optional listing ID
+            listing_id: Optional listing ID (for logging)
             
         Returns:
             Number of reviews updated
         """
-        approved_at = datetime.utcnow() if is_approved else None
-        
-        # Update existing records
-        await db.execute(
-            update(ReviewApproval)
-            .where(ReviewApproval.review_id.in_(review_ids))
-            .values(
-                is_approved=is_approved,
-                approved_at=approved_at,
-                listing_id=listing_id
-            )
-        )
-        
-        # Get existing review IDs
-        result = await db.execute(
-            select(ReviewApproval.review_id).where(ReviewApproval.review_id.in_(review_ids))
-        )
-        existing_ids = set(result.scalars().all())
-        
-        # Create new records for reviews that don't exist
-        new_approvals = [
-            ReviewApproval(
-                review_id=rid,
-                listing_id=listing_id,
-                is_approved=is_approved,
-                approved_at=approved_at
-            )
-            for rid in review_ids
-            if rid not in existing_ids
-        ]
-        
-        if new_approvals:
-            db.add_all(new_approvals)
-        
-        await db.commit()
-        
-        logger.info(f"Bulk set approval status for {len(review_ids)} reviews: {is_approved}")
-        return len(review_ids)
+        count = await ReviewRepository.bulk_set_approval_status(db, review_ids, is_approved)
+        logger.info(f"Bulk set approval status for {count} reviews: {is_approved}")
+        return count
     
     @staticmethod
     async def get_approved_reviews(
@@ -178,11 +116,5 @@ class ReviewApprovalService:
         Returns:
             List of approved review IDs
         """
-        query = select(ReviewApproval.review_id).where(ReviewApproval.is_approved == True)
-        
-        if listing_id:
-            query = query.where(ReviewApproval.listing_id == listing_id)
-        
-        result = await db.execute(query)
-        return list(result.scalars().all())
-
+        approved_reviews = await ReviewRepository.get_approved(db, listing_id)
+        return [review.id for review in approved_reviews]

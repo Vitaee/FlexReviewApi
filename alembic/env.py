@@ -9,7 +9,7 @@ from app.database.base import Base
 from app.core.config import settings
 
 # Import all models to ensure they're registered
-from app.database.models import ReviewApproval  # noqa
+from app.database.models import Review  # noqa
 
 # this is the Alembic Config object
 config = context.config
