@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, update, delete
 from sqlalchemy.exc import IntegrityError
 from typing import Optional, List, Dict
-from datetime import datetime
+from datetime import datetime, timezone
 from app.database.models import Review
 from app.models import NormalizedReview
 from app.core.logging_config import get_logger
@@ -253,8 +253,20 @@ class ReviewRepository:
         Returns:
             NormalizedReview object
         """
-        # Format submittedAt as ISO 8601 string
-        submitted_at_str = review.submitted_at.isoformat() + 'Z' if review.submitted_at else ""
+        # Format submittedAt as ISO 8601 string (UTC with Z suffix)
+        if review.submitted_at:
+            # Convert to UTC if timezone-aware, otherwise assume UTC
+            if review.submitted_at.tzinfo is not None:
+                submitted_at_utc = review.submitted_at.astimezone(timezone.utc)
+            else:
+                submitted_at_utc = review.submitted_at.replace(tzinfo=timezone.utc)
+            # Format as ISO 8601 with Z suffix (e.g., "2024-11-05T07:55:00Z")
+            submitted_at_str = submitted_at_utc.strftime("%Y-%m-%dT%H:%M:%SZ")
+        else:
+            submitted_at_str = ""
+        
+        # Set date from submitted_at datetime
+        date_value = review.submitted_at if review.submitted_at else None
         
         return NormalizedReview(
             id=review.id,
@@ -271,6 +283,7 @@ class ReviewRepository:
             privateNote=review.private_note,
             guestName=review.guest_name,
             submittedAt=submitted_at_str,
+            date=date_value,
             stayDate=review.stay_date,
             stayLength=review.stay_length,
             isApproved=review.is_approved

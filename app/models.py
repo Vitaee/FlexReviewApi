@@ -87,13 +87,19 @@ class NormalizedReview(BaseModel):
         # Ensure date is set from submittedAt if not provided
         if self.date is None and self.submittedAt:
             try:
-                # Try ISO format first
-                if 'T' in self.submittedAt or self.submittedAt.endswith('Z'):
-                    dt = datetime.fromisoformat(self.submittedAt.replace('Z', '+00:00'))
+                # Handle ISO 8601 format with Z suffix (e.g., "2024-11-05T07:55:00Z")
+                if self.submittedAt.endswith('Z'):
+                    # Replace Z with +00:00 for fromisoformat
+                    dt_str = self.submittedAt.replace('Z', '+00:00')
+                    dt = datetime.fromisoformat(dt_str)
+                elif 'T' in self.submittedAt:
+                    # ISO format without Z
+                    dt = datetime.fromisoformat(self.submittedAt)
                 else:
                     # Fall back to Hostaway format
                     dt = datetime.strptime(self.submittedAt, "%Y-%m-%d %H:%M:%S")
                 object.__setattr__(self, 'date', dt)
-            except (ValueError, AttributeError):
+            except (ValueError, AttributeError) as e:
+                # Log error but don't fail - date will remain None
                 pass
 
