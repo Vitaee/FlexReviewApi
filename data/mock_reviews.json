@@ -1,0 +1,328 @@
+{
+  "status": "success",
+  "result": [
+    {
+      "id": 7453,
+      "type": "host-to-guest",
+      "status": "published",
+      "rating": null,
+      "publicReview": "Shane and family are wonderful! Would definitely host again :)",
+      "privateNote": "Left the kitchen spotless, small scuff on hallway wall noted.",
+      "reviewCategory": [
+        {
+          "category": "cleanliness",
+          "rating": 10
+        },
+        {
+          "category": "communication",
+          "rating": 10
+        },
+        {
+          "category": "respect_house_rules",
+          "rating": 10
+        }
+      ],
+      "submittedAt": "2024-08-21T22:45:14Z",
+      "guestName": "Shane Finkelstein",
+      "listingName": "Shoreditch Heights Duplex",
+      "listingId": "FLX-307",
+      "listingLocation": "London, UK",
+      "channel": "airbnb",
+      "stayDate": "2024-08-15",
+      "stayLength": 5
+    },
+    {
+      "id": 7454,
+      "type": "guest-to-host",
+      "status": "published",
+      "rating": 9.4,
+      "publicReview": "Stylish loft in the perfect location. Check-in tablet was glitchy but the team sorted it fast.",
+      "reviewCategory": [
+        {
+          "category": "cleanliness",
+          "rating": 10
+        },
+        {
+          "category": "communication",
+          "rating": 9
+        },
+        {
+          "category": "check_in",
+          "rating": 8
+        },
+        {
+          "category": "location",
+          "rating": 10
+        },
+        {
+          "category": "value",
+          "rating": 9
+        }
+      ],
+      "submittedAt": "2024-09-02T18:10:00Z",
+      "guestName": "Evelyn B.",
+      "listingName": "Shoreditch Heights Duplex",
+      "listingId": "FLX-307",
+      "listingLocation": "London, UK",
+      "channel": "airbnb",
+      "stayDate": "2024-08-26",
+      "stayLength": 7
+    },
+    {
+      "id": 8101,
+      "type": "guest-to-host",
+      "status": "published",
+      "rating": 8.6,
+      "publicReview": "Loved the open kitchen. Street noise on Saturday was louder than expected.",
+      "reviewCategory": [
+        {
+          "category": "cleanliness",
+          "rating": 9
+        },
+        {
+          "category": "communication",
+          "rating": 10
+        },
+        {
+          "category": "location",
+          "rating": 8
+        },
+        {
+          "category": "value",
+          "rating": 8
+        }
+      ],
+      "submittedAt": "2024-10-10T12:32:00Z",
+      "guestName": "Marco Vieira",
+      "listingName": "Borough Market Loft",
+      "listingId": "FLX-101",
+      "listingLocation": "London, UK",
+      "channel": "booking",
+      "stayDate": "2024-10-04",
+      "stayLength": 4
+    },
+    {
+      "id": 8102,
+      "type": "guest-to-host",
+      "status": "published",
+      "rating": 9.8,
+      "publicReview": "Can walk everywhere. Espresso machine and pantry items were a lovely touch.",
+      "reviewCategory": [
+        {
+          "category": "cleanliness",
+          "rating": 10
+        },
+        {
+          "category": "communication",
+          "rating": 10
+        },
+        {
+          "category": "location",
+          "rating": 10
+        },
+        {
+          "category": "value",
+          "rating": 9
+        }
+      ],
+      "submittedAt": "2024-11-02T09:20:00Z",
+      "guestName": "Sara Meier",
+      "listingName": "Borough Market Loft",
+      "listingId": "FLX-101",
+      "listingLocation": "London, UK",
+      "channel": "booking",
+      "stayDate": "2024-10-27",
+      "stayLength": 3
+    },
+    {
+      "id": 9020,
+      "type": "guest-to-host",
+      "status": "published",
+      "rating": 7.3,
+      "publicReview": "Great view but the spiral stairs are steep. Bathroom towel rail was loose.",
+      "reviewCategory": [
+        {
+          "category": "cleanliness",
+          "rating": 7
+        },
+        {
+          "category": "communication",
+          "rating": 8
+        },
+        {
+          "category": "accuracy",
+          "rating": 7
+        },
+        {
+          "category": "value",
+          "rating": 6
+        }
+      ],
+      "submittedAt": "2024-07-12T08:00:00Z",
+      "guestName": "Lucia Romero",
+      "listingName": "Canal View Penthouse",
+      "listingId": "FLX-203",
+      "listingLocation": "Amsterdam, NL",
+      "channel": "airbnb",
+      "stayDate": "2024-07-05",
+      "stayLength": 6
+    },
+    {
+      "id": 9021,
+      "type": "guest-to-host",
+      "status": "published",
+      "rating": 9.1,
+      "publicReview": "Peaceful stay. Bikes in the lobby were a surprise bonus!",
+      "reviewCategory": [
+        {
+          "category": "cleanliness",
+          "rating": 9
+        },
+        {
+          "category": "communication",
+          "rating": 9
+        },
+        {
+          "category": "location",
+          "rating": 10
+        },
+        {
+          "category": "value",
+          "rating": 8
+        }
+      ],
+      "submittedAt": "2024-08-03T15:30:00Z",
+      "guestName": "Jasper van Dijk",
+      "listingName": "Canal View Penthouse",
+      "listingId": "FLX-203",
+      "listingLocation": "Amsterdam, NL",
+      "channel": "airbnb",
+      "stayDate": "2024-07-28",
+      "stayLength": 2
+    },
+    {
+      "id": 9600,
+      "type": "guest-to-host",
+      "status": "published",
+      "rating": 8.2,
+      "publicReview": "Loved the rooftop plunge pool. Could use clearer signage for the smart lock.",
+      "reviewCategory": [
+        {
+          "category": "cleanliness",
+          "rating": 8
+        },
+        {
+          "category": "communication",
+          "rating": 8
+        },
+        {
+          "category": "check_in",
+          "rating": 7
+        },
+        {
+          "category": "value",
+          "rating": 9
+        }
+      ],
+      "submittedAt": "2024-06-21T17:45:00Z",
+      "guestName": "Camila Torres",
+      "listingName": "Lisbon Alfama Hideout",
+      "listingId": "FLX-411",
+      "listingLocation": "Lisbon, PT",
+      "channel": "direct",
+      "stayDate": "2024-06-15",
+      "stayLength": 5
+    },
+    {
+      "id": 9601,
+      "type": "host-to-guest",
+      "status": "published",
+      "rating": null,
+      "publicReview": "Camila respected every rule and watered the herbs for us!",
+      "reviewCategory": [
+        {
+          "category": "respect_house_rules",
+          "rating": 10
+        },
+        {
+          "category": "communication",
+          "rating": 9
+        }
+      ],
+      "submittedAt": "2024-06-22T09:00:00Z",
+      "guestName": "Camila Torres",
+      "listingName": "Lisbon Alfama Hideout",
+      "listingId": "FLX-411",
+      "listingLocation": "Lisbon, PT",
+      "channel": "direct",
+      "stayDate": "2024-06-15",
+      "stayLength": 5
+    },
+    {
+      "id": 9900,
+      "type": "guest-to-host",
+      "status": "published",
+      "rating": 9.6,
+      "publicReview": "Sunset terrace dinners were magical. Bedroom blackout shades could be darker.",
+      "reviewCategory": [
+        {
+          "category": "cleanliness",
+          "rating": 9
+        },
+        {
+          "category": "communication",
+          "rating": 10
+        },
+        {
+          "category": "location",
+          "rating": 10
+        },
+        {
+          "category": "value",
+          "rating": 9
+        }
+      ],
+      "submittedAt": "2024-09-18T14:25:00Z",
+      "guestName": "Fiona Gallagher",
+      "listingName": "Barcelona Passeig Suite",
+      "listingId": "FLX-509",
+      "listingLocation": "Barcelona, ES",
+      "channel": "vrbo",
+      "stayDate": "2024-09-10",
+      "stayLength": 6
+    },
+    {
+      "id": 9901,
+      "type": "guest-to-host",
+      "status": "published",
+      "rating": 6.9,
+      "publicReview": "Construction on the street made mornings noisy. Staff moved me to a higher floor mid-stay.",
+      "reviewCategory": [
+        {
+          "category": "cleanliness",
+          "rating": 8
+        },
+        {
+          "category": "communication",
+          "rating": 9
+        },
+        {
+          "category": "location",
+          "rating": 6
+        },
+        {
+          "category": "value",
+          "rating": 6
+        }
+      ],
+      "submittedAt": "2024-11-05T07:55:00Z",
+      "guestName": "Noah Kent",
+      "listingName": "Barcelona Passeig Suite",
+      "listingId": "FLX-509",
+      "listingLocation": "Barcelona, ES",
+      "channel": "vrbo",
+      "stayDate": "2024-11-01",
+      "stayLength": 5
+    }
+  ]
+}
